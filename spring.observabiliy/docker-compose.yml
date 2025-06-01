@@ -1,0 +1,33 @@
+version: '3.8'
+networks:
+  monitor-net:
+    driver: bridge
+
+services:
+  prometheus1:
+    container_name: prometheusH1
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    command: --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+    networks:
+      - monitor-net
+
+  grafana1:
+    container_name: grafana1
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+    networks:
+      - monitor-net
+
+volumes:
+  grafana-data:
